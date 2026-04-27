@@ -18,10 +18,12 @@ def build_transform(train: bool):
         ops.extend(
             [
                 transforms.RandomHorizontalFlip(p=0.5),
-                transforms.RandomRotation(degrees=10),
+                transforms.RandomAffine(degrees=12, translate=(0.08, 0.08), scale=(0.92, 1.08)),
             ]
         )
     ops.extend([transforms.ToTensor(), transforms.Normalize(mean=[0.5], std=[0.5])])
+    if train:
+        ops.append(transforms.RandomErasing(p=0.15, scale=(0.02, 0.10), ratio=(0.5, 2.0), value=0.0))
     return transforms.Compose(ops)
 
 

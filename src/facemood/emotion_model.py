@@ -13,24 +13,17 @@ class EmotionCNNFactory:
         import torch.nn as nn
 
         return nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=3, padding=1),
-            nn.BatchNorm2d(32),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),
-            nn.Conv2d(32, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),
-            nn.BatchNorm2d(128),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),
+            _conv_block(nn, 1, 64, dropout=0.05),
+            _conv_block(nn, 64, 128, dropout=0.10),
+            _conv_block(nn, 128, 256, dropout=0.15),
+            _conv_block(nn, 256, 256, dropout=0.20),
+            nn.AdaptiveAvgPool2d((1, 1)),
             nn.Flatten(),
-            nn.Dropout(0.35),
-            nn.Linear(128 * 6 * 6, 256),
+            nn.Dropout(0.40),
+            nn.Linear(256, 128),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.25),
-            nn.Linear(256, num_classes),
+            nn.Dropout(0.30),
+            nn.Linear(128, num_classes),
         )
 
 
@@ -80,3 +73,15 @@ def create_emotion_recognizer(weights_path: Path, device: str | None = None):
     except RuntimeError:
         return NullEmotionRecognizer()
 
+
+def _conv_block(nn, in_channels: int, out_channels: int, dropout: float):
+    return nn.Sequential(
+        nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1, bias=False),
+        nn.BatchNorm2d(out_channels),
+        nn.ReLU(inplace=True),
+        nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1, bias=False),
+        nn.BatchNorm2d(out_channels),
+        nn.ReLU(inplace=True),
+        nn.MaxPool2d(2),
+        nn.Dropout2d(dropout),
+    )

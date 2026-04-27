@@ -48,7 +48,8 @@ Every group member should speak. Put the speaker name on each slide.
 
 ## Slide 7 - Results
 
-- Accuracy
+- Best validation accuracy: 60.96%
+- Test accuracy: 63.30%
 - Confusion matrix
 - Webcam screenshots
 - Multi-person test

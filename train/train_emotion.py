@@ -25,7 +25,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train FaceMood 7-class emotion CNN.")
     parser.add_argument("--data-dir", default=str(IMAGE_DATA_DIR))
     parser.add_argument("--epochs", type=int, default=10)
-    parser.add_argument("--batch-size", type=int, default=128)
+    parser.add_argument("--batch-size", type=int, default=256)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--class-weights", action="store_true", help="Use inverse-frequency class weights.")
     parser.add_argument("--weight-decay", type=float, default=1e-4)

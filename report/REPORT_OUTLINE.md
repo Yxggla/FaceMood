@@ -20,8 +20,10 @@ FaceMood aims to build a real-time facial expression recognition system using Py
 To be filled after experiments:
 
 - dataset class distribution from `report/DATASET_SUMMARY.md`
-- training/validation accuracy
-- confusion matrix
+- best validation accuracy: 60.96%
+- test accuracy: 63.30%
+- confusion matrix from `results/figures/test_confusion_matrix.png`
+- training curve from `results/figures/training_history.png`
 - single-person webcam test
 - multi-person webcam test
 - lighting condition test
@@ -29,7 +31,7 @@ To be filled after experiments:
 
 ## 4. Conclusion and Discussion
 
-Discuss what worked, limitations such as class imbalance in `disgust`, webcam lighting sensitivity, and possible improvements such as class weights, data augmentation, stronger detectors, or a pretrained backbone.
+Discuss what worked, limitations such as remaining confusion in `fear`, webcam lighting sensitivity, and possible improvements such as stronger detectors or a pretrained backbone. Mention that class weighting improved the minority `disgust` recall but did not fully solve all class confusion.
 
 ## 5. Individual Contributions
 

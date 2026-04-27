@@ -94,10 +94,15 @@ The demo overlays FPS, current emotion distribution, and a recording indicator.
 
 ## Optional Model Tuning
 
-The baseline training result is acceptable for the course demo. If the team wants to improve weak classes such as `disgust` and `fear`, try class weighting:
+The improved local result uses a stronger CNN, data augmentation, learning-rate decay, and class weighting:
 
 ```bash
 python train/train_emotion.py --epochs 30 --class-weights
 ```
 
-This is optional because class weighting may improve minority-class recall while slightly reducing overall accuracy.
+Current improved local result:
+
+- Best validation accuracy: `60.96%`
+- Test accuracy: `63.30%`
+- Strong classes: `happy`, `surprise`
+- Improved minority-class behavior: `disgust` recall increased substantially compared with the first baseline
