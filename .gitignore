@@ -1,0 +1,24 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Large/generated project outputs
+data/fer2013/
+data/fer2013_7cls_images/
+models/checkpoints/*.pt
+models/checkpoints/*.pth
+models/exported/*.pt
+models/exported/*.pth
+results/figures/*
+results/screenshots/*
+results/videos/*
+results/metrics/*
+
+# Keep directory placeholders
+!results/figures/.gitkeep
+!results/screenshots/.gitkeep
+!results/videos/.gitkeep
+!results/metrics/.gitkeep
