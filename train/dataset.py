@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from pathlib import Path
 
 from torch.utils.data import Subset
@@ -29,6 +30,28 @@ def load_split(data_dir: Path, split: str, train: bool, limit: int | None = None
     if dataset.classes != EMOTION_CLASSES:
         raise ValueError(f"Unexpected class order: {dataset.classes}. Expected: {EMOTION_CLASSES}")
     if limit is not None:
-        dataset = Subset(dataset, range(min(limit, len(dataset))))
+        dataset = Subset(dataset, _balanced_indices(dataset.targets, limit))
     return dataset
 
+
+def _balanced_indices(targets: list[int], limit: int) -> list[int]:
+    by_class: dict[int, list[int]] = defaultdict(list)
+    for index, target in enumerate(targets):
+        by_class[int(target)].append(index)
+
+    selected: list[int] = []
+    class_ids = sorted(by_class)
+    offset = 0
+    while len(selected) < min(limit, len(targets)):
+        added = False
+        for class_id in class_ids:
+            items = by_class[class_id]
+            if offset < len(items):
+                selected.append(items[offset])
+                added = True
+                if len(selected) >= limit:
+                    break
+        if not added:
+            break
+        offset += 1
+    return selected
