@@ -27,6 +27,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--class-weights", action="store_true", help="Use inverse-frequency class weights.")
+    parser.add_argument("--weight-decay", type=float, default=1e-4)
+    parser.add_argument("--lr-step", type=int, default=10)
+    parser.add_argument("--lr-gamma", type=float, default=0.5)
     parser.add_argument("--device", default=None)
     parser.add_argument("--limit-train", type=int, default=None)
     parser.add_argument("--limit-val", type=int, default=None)
@@ -45,8 +49,9 @@ def main() -> None:
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=0)
 
     model = build_model(num_classes=len(EMOTION_CLASSES)).to(device)
-    criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    criterion = nn.CrossEntropyLoss(weight=_class_weights(train_dataset, device) if args.class_weights else None)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=args.lr_step, gamma=args.lr_gamma)
     history = []
     best_acc = -1.0
 
@@ -67,6 +72,7 @@ def main() -> None:
         }
         history.append(record)
         print(json.dumps(record, ensure_ascii=False))
+        scheduler.step()
 
         checkpoint = {
             "model_state_dict": model.state_dict(),
@@ -105,6 +111,17 @@ def run_epoch(model, loader, criterion, optimizer, device):
         total_samples += labels.size(0)
 
     return total_loss / total_samples, total_correct / total_samples
+
+
+def _class_weights(dataset, device):
+    base_dataset = getattr(dataset, "dataset", dataset)
+    indices = getattr(dataset, "indices", range(len(base_dataset)))
+    counts = torch.zeros(len(EMOTION_CLASSES), dtype=torch.float32)
+    for index in indices:
+        counts[int(base_dataset.targets[index])] += 1
+    counts = counts.clamp_min(1.0)
+    weights = counts.sum() / (len(EMOTION_CLASSES) * counts)
+    return weights.to(device)
 
 
 if __name__ == "__main__":

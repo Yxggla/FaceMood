@@ -78,6 +78,19 @@ python src/main.py
 
 当前可以先不训练模型。没有 `models/exported/emotion_cnn.pt` 时，窗口仍会尝试打开摄像头并画人脸框/关键点，表情会显示为 `unknown`。
 
+实时窗口按键：
+
+- `s` 保存当前截图
+- `r` 开始/停止录屏
+- `q` 或 `Esc` 退出
+
+截图和视频会保存到：
+
+```text
+results/screenshots/
+results/videos/
+```
+
 ## 4. 快速训练测试
 
 这一节会开始训练模型。如果当前电脑不负责训练，可以先跳过。
@@ -93,6 +106,14 @@ python train/train_emotion.py --epochs 1 --limit-train 256 --limit-val 128
 ```bash
 python train/train_emotion.py --epochs 10
 ```
+
+如果想针对 `disgust`、`fear` 这类弱类别做优化，可以试：
+
+```bash
+python train/train_emotion.py --epochs 30 --class-weights
+```
+
+这不是必需项，最终是否采用要看验证集和测试集结果。
 
 训练完成后，默认模型会保存到：
 

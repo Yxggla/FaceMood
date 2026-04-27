@@ -9,14 +9,14 @@
 - Real-time pipeline code structure: camera, face detection, landmarks, alignment, prediction, visualization.
 - Training and evaluation script structure.
 - Report and presentation outlines based on course requirements.
+- Baseline 30-epoch model trained locally with around 60.8% test accuracy.
+- Demo controls for screenshot and video recording.
 
 ## Not Done Yet
 
 - Dependency installation on each teammate's machine.
 - Camera demo validation after installing OpenCV and MediaPipe.
-- Emotion model training.
-- Evaluation metrics and confusion matrix.
-- Screenshots and demo video for report/PPT.
+- Final chosen demo screenshots and demo video for report/PPT.
 - Final report text and final slide deck.
 
 ## Recommended Next Work
@@ -26,4 +26,3 @@
 3. Model owner trains the CNN and saves `models/exported/emotion_cnn.pt`.
 4. Evaluation owner runs `train/evaluate.py` and saves metrics/figures.
 5. Report/PPT owner fills in results using files in `results/`.
-

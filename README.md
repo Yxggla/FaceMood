@@ -83,3 +83,21 @@ python src/main.py
 ```
 
 If `models/exported/emotion_cnn.pt` does not exist yet, the demo still opens the camera and draws detections/landmarks, but emotion labels are shown as `unknown`.
+
+Demo controls:
+
+- `s`: save screenshot to `results/screenshots/`
+- `r`: start/stop video recording to `results/videos/`
+- `q` or `Esc`: quit
+
+The demo overlays FPS, current emotion distribution, and a recording indicator.
+
+## Optional Model Tuning
+
+The baseline training result is acceptable for the course demo. If the team wants to improve weak classes such as `disgust` and `fear`, try class weighting:
+
+```bash
+python train/train_emotion.py --epochs 30 --class-weights
+```
+
+This is optional because class weighting may improve minority-class recall while slightly reducing overall accuracy.
