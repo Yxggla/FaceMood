@@ -34,6 +34,8 @@ On macOS, double-click `start_mac.command`. On Windows, double-click `start_wind
 
 For detailed teammate setup instructions, read `START_HERE.md`.
 
+The launcher can show dataset counts, preview sample images, check dependencies, and generate a dataset report without running the emotion model.
+
 To run the full camera demo and training pipeline, install dependencies:
 
 ```bash
@@ -56,6 +58,22 @@ For a quick smoke test:
 
 ```bash
 python train/train_emotion.py --epochs 1 --limit-train 256 --limit-val 128
+```
+
+## Dataset Report
+
+This command does not train or run the model. It only summarizes the local FER2013 data:
+
+```bash
+python tools/generate_dataset_report.py
+```
+
+Outputs:
+
+```text
+results/metrics/dataset_summary.json
+results/metrics/dataset_summary.csv
+report/DATASET_SUMMARY.md
 ```
 
 ## Run Demo

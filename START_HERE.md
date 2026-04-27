@@ -38,9 +38,13 @@ py -3 run.py
 启动器窗口会显示：
 
 - FER2013 7 类数据的 train / val / test 数量
+- 每个情绪类别的数据量柱状图
+- 每个情绪类别的一张样本预览图
 - 当前 Python 版本
 - OpenCV、PyTorch、MediaPipe 等依赖是否已安装
 - 模型文件是否存在
+
+这些功能不会训练模型，也不会运行模型推理。
 
 ## 2. 安装完整环境
 
@@ -75,6 +79,8 @@ python src/main.py
 当前可以先不训练模型。没有 `models/exported/emotion_cnn.pt` 时，窗口仍会尝试打开摄像头并画人脸框/关键点，表情会显示为 `unknown`。
 
 ## 4. 快速训练测试
+
+这一节会开始训练模型。如果当前电脑不负责训练，可以先跳过。
 
 确认训练脚本能跑通：
 
@@ -125,3 +131,11 @@ PPT 需要包含：
 - conclusion and discussion
 - 每个人都要讲，并在自己负责的 slide 上写姓名
 
+## 7. 不跑模型也可以完成的任务
+
+```bash
+python tools/check_environment.py
+python tools/generate_dataset_report.py
+```
+
+这两个命令只检查环境和统计数据集，不会训练模型。

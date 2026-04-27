@@ -22,3 +22,5 @@ results/metrics/*
 !results/screenshots/.gitkeep
 !results/videos/.gitkeep
 !results/metrics/.gitkeep
+!results/metrics/dataset_summary.csv
+!results/metrics/dataset_summary.json

@@ -32,6 +32,7 @@ Every group member should speak. Put the speaker name on each slide.
 - FER2013 7 classes
 - train / validation / test split
 - Class imbalance observation, especially `disgust`
+- Use `report/DATASET_SUMMARY.md` for the table
 
 ## Slide 5 - Face Detection and Landmarks
 
@@ -67,4 +68,3 @@ Every group member should speak. Put the speaker name on each slide.
 
 - Each member's contribution
 - Q&A
-

@@ -19,6 +19,7 @@ FaceMood aims to build a real-time facial expression recognition system using Py
 
 To be filled after experiments:
 
+- dataset class distribution from `report/DATASET_SUMMARY.md`
 - training/validation accuracy
 - confusion matrix
 - single-person webcam test
@@ -40,4 +41,3 @@ Discuss what worked, limitations such as class imbalance in `disgust`, webcam li
 | Member 4 | Emotion model training |
 | Member 5 | Visualization and effects |
 | Member 6 | Evaluation, report, slides |
-

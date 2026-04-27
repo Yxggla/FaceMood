@@ -1,0 +1,61 @@
+{
+  "generated_at": "2026-04-27T14:19:11",
+  "data_dir": "/Users/dongbaba/Documents/FaceMood/data/fer2013_7cls_images",
+  "classes": [
+    "angry",
+    "disgust",
+    "fear",
+    "happy",
+    "neutral",
+    "sad",
+    "surprise"
+  ],
+  "counts": {
+    "train": {
+      "angry": 3995,
+      "disgust": 436,
+      "fear": 4097,
+      "happy": 7215,
+      "neutral": 4965,
+      "sad": 4830,
+      "surprise": 3171
+    },
+    "val": {
+      "angry": 467,
+      "disgust": 56,
+      "fear": 496,
+      "happy": 895,
+      "neutral": 607,
+      "sad": 653,
+      "surprise": 415
+    },
+    "test": {
+      "angry": 491,
+      "disgust": 55,
+      "fear": 528,
+      "happy": 879,
+      "neutral": 626,
+      "sad": 594,
+      "surprise": 416
+    }
+  },
+  "split_totals": {
+    "train": 28709,
+    "val": 3589,
+    "test": 3589
+  },
+  "emotion_totals": {
+    "angry": 4953,
+    "disgust": 547,
+    "fear": 5121,
+    "happy": 8989,
+    "neutral": 6198,
+    "sad": 6077,
+    "surprise": 4002
+  },
+  "total_images": 35887,
+  "notes": [
+    "FER2013 is used in the 7-class ImageFolder layout.",
+    "The disgust class is much smaller than the other classes, so final training should discuss class imbalance."
+  ]
+}
