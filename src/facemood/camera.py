@@ -13,7 +13,11 @@ class Camera:
     def __enter__(self) -> "Camera":
         self.capture = cv2.VideoCapture(self.index)
         if not self.capture.isOpened():
-            raise RuntimeError(f"Unable to open camera index {self.index}")
+            raise RuntimeError(
+                f"Unable to open camera index {self.index}. "
+                "Check camera permissions and make sure no other app is using the camera. "
+                "On macOS, allow Terminal/Python camera access in System Settings > Privacy & Security > Camera."
+            )
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
         return self
@@ -30,4 +34,3 @@ class Camera:
         if not ok:
             raise RuntimeError("Failed to read frame from camera")
         return frame
-

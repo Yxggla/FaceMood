@@ -31,6 +31,9 @@ class MediaPipeLandmarkDetector:
         except ImportError as exc:
             raise RuntimeError("mediapipe is required for landmark detection") from exc
 
+        if not hasattr(mp, "solutions") or not hasattr(mp.solutions, "face_mesh"):
+            raise RuntimeError("Installed mediapipe package does not expose mp.solutions.face_mesh")
+
         self._face_mesh = mp.solutions.face_mesh.FaceMesh(
             static_image_mode=False,
             max_num_faces=max_num_faces,
@@ -74,11 +77,10 @@ class NullLandmarkDetector:
 def create_landmark_detector() -> MediaPipeLandmarkDetector | NullLandmarkDetector:
     try:
         return MediaPipeLandmarkDetector()
-    except RuntimeError:
+    except Exception:
         return NullLandmarkDetector()
 
 
 def _clip_bbox(bbox: tuple[int, int, int, int], width: int, height: int) -> tuple[int, int, int, int]:
     x1, y1, x2, y2 = bbox
     return max(0, x1), max(0, y1), min(width, x2), min(height, y2)
-
