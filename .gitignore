@@ -4,6 +4,7 @@ __pycache__/
 .venv/
 venv/
 env/
+models.zip
 
 # Large/generated project outputs
 data/fer2013/
