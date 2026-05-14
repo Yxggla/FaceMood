@@ -24,7 +24,7 @@ def test_emotion_classes_are_fer2013_7_class_order():
     sys.path.insert(0, str(root / "src"))
     from facemood.config import EMOTION_CLASSES
 
-    assert EMOTION_CLASSES == ["angry", "disgust", "fear", "happy", "neutral", "sad", "surprise"]
+    assert EMOTION_CLASSES == ["angry", "fear", "happy", "neutral", "sad", "surprise"]
 
 
 def test_dataset_summary_payload_contains_totals():
@@ -35,5 +35,5 @@ def test_dataset_summary_payload_contains_totals():
     from facemood.reporting import build_dataset_summary
 
     payload = build_dataset_summary(root / "data" / "fer2013_7cls_images")
-    assert payload["total_images"] == 35887
-    assert payload["split_totals"] == {"train": 28709, "val": 3589, "test": 3589}
+    assert payload["total_images"] == 35340
+    assert payload["split_totals"] == {"train": 28273, "val": 3533, "test": 3534}

@@ -13,6 +13,18 @@ class FaceLandmarks:
     nose: tuple[int, int]
     mouth_left: tuple[int, int]
     mouth_right: tuple[int, int]
+    upper_lip: tuple[int, int] = (0, 0)
+    lower_lip: tuple[int, int] = (0, 0)
+    chin: tuple[int, int] = (0, 0)
+    left_eyebrow_inner: tuple[int, int] = (0, 0)
+    right_eyebrow_inner: tuple[int, int] = (0, 0)
+    left_eyebrow_outer: tuple[int, int] = (0, 0)
+    right_eyebrow_outer: tuple[int, int] = (0, 0)
+    left_eye_top: tuple[int, int] = (0, 0)
+    left_eye_bottom: tuple[int, int] = (0, 0)
+    right_eye_top: tuple[int, int] = (0, 0)
+    right_eye_bottom: tuple[int, int] = (0, 0)
+    nose_bridge: tuple[int, int] = (0, 0)
 
     def as_dict(self) -> dict[str, tuple[int, int]]:
         return {
@@ -22,6 +34,9 @@ class FaceLandmarks:
             "mouth_left": self.mouth_left,
             "mouth_right": self.mouth_right,
         }
+
+    def has_geo(self) -> bool:
+        return self.left_eyebrow_inner != (0, 0) and self.right_eyebrow_inner != (0, 0)
 
 
 class MediaPipeLandmarkDetector:
@@ -66,6 +81,18 @@ class MediaPipeLandmarkDetector:
             nose=point(1),
             mouth_left=point(61),
             mouth_right=point(291),
+            upper_lip=point(13),
+            lower_lip=point(14),
+            chin=point(4),
+            left_eyebrow_inner=point(46),
+            right_eyebrow_inner=point(276),
+            left_eyebrow_outer=point(53),
+            right_eyebrow_outer=point(285),
+            left_eye_top=point(159),
+            left_eye_bottom=point(145),
+            right_eye_top=point(386),
+            right_eye_bottom=point(374),
+            nose_bridge=point(168),
         )
 
 

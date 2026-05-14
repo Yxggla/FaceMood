@@ -23,8 +23,8 @@ def build_dataset_summary(data_dir: Path = IMAGE_DATA_DIR) -> dict:
         "emotion_totals": emotion_totals,
         "total_images": total,
         "notes": [
-            "FER2013 is used in the 7-class ImageFolder layout.",
-            "The disgust class is much smaller than the other classes, so final training should discuss class imbalance.",
+            "FER2013 is used in the 7-class ImageFolder layout (disgust excluded at inference).",
+            "The disgust class has been removed from the inference pipeline; the model originally outputs 7 classes.",
         ],
     }
 
@@ -99,9 +99,8 @@ def _to_markdown(payload: dict) -> str:
             "",
             "## Notes for Report",
             "",
-            "- The project uses all 7 FER2013 emotion classes: angry, disgust, fear, happy, neutral, sad, surprise.",
-            "- The `disgust` class is heavily underrepresented compared with the other classes.",
-            "- This imbalance should be mentioned in the findings/discussion section after model evaluation.",
+            "- The project uses 6 FER2013 emotion classes at inference: angry, fear, happy, neutral, sad, surprise.",
+            "- `disgust` was removed from the inference pipeline due to poor model performance and severe class imbalance.",
             "",
         ]
     )

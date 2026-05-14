@@ -16,8 +16,8 @@ if str(ROOT) not in sys.path:
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from facemood.config import EMOTION_CLASSES, IMAGE_DATA_DIR
-from train.dataset import load_split
+from facemood.config import IMAGE_DATA_DIR
+from train.dataset import EMOTION_CLASSES, load_split
 from train.model import build_model
 
 

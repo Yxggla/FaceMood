@@ -4,12 +4,12 @@ from pathlib import Path
 
 import numpy as np
 
-from .config import EMOTION_CLASSES, IMAGE_SIZE
+from .config import EMOTION_BIAS, EMOTION_CLASSES, IMAGE_SIZE, MODEL_NUM_CLASSES
 
 
 class EmotionCNNFactory:
     @staticmethod
-    def build(num_classes: int = len(EMOTION_CLASSES)):
+    def build(num_classes: int = MODEL_NUM_CLASSES):
         import torch.nn as nn
 
         return nn.Sequential(
@@ -36,22 +36,42 @@ class EmotionRecognizer:
 
         self.torch = torch
         self.device = torch.device(device or ("mps" if torch.backends.mps.is_available() else "cpu"))
-        self.model = EmotionCNNFactory.build().to(self.device)
+        self.model = EmotionCNNFactory.build(num_classes=MODEL_NUM_CLASSES).to(self.device)
         checkpoint = torch.load(weights_path, map_location=self.device)
         state_dict = checkpoint.get("model_state_dict", checkpoint)
         self.model.load_state_dict(state_dict)
         self.model.eval()
 
     def predict(self, face_gray: np.ndarray) -> tuple[str, float]:
+        probs = self.predict_proba(face_gray)
+        index = int(np.argmax(probs))
+        return EMOTION_CLASSES[index], float(probs[index])
+
+    def predict_proba(self, face_gray: np.ndarray) -> np.ndarray:
         tensor = self._to_tensor(face_gray)
         with self.torch.no_grad():
             logits = self.model(tensor)
             probs = self.torch.softmax(logits, dim=1)[0]
-            confidence, index = self.torch.max(probs, dim=0)
-        return EMOTION_CLASSES[int(index.item())], float(confidence.item())
+        probs = probs.detach().cpu().numpy().astype("float32")
+        # 模型输出 7 类 [angry, disgust, fear, happy, neutral, sad, surprise]
+        # 移除 disgust（索引 1）并重新归一化，映射到 6 类
+        probs = np.delete(probs, 1)
+        # 定向增强 angry(0)、fear(1)、sad(4) 的概率
+        for i, emotion in enumerate(EMOTION_CLASSES):
+            boost = EMOTION_BIAS.get(emotion, 0.0)
+            if boost > 0.0:
+                probs[i] += boost
+        clipped = np.clip(probs, 0.0, None)
+        total = float(clipped.sum())
+        if total <= 1e-8:
+            return np.zeros(len(EMOTION_CLASSES), dtype="float32")
+        return (clipped / total).astype("float32")
 
     def _to_tensor(self, face_gray: np.ndarray):
         face = face_gray.astype("float32") / 255.0
+        # Match training-time normalization (see train/dataset.py):
+        # transforms.ToTensor() -> [0, 1], then Normalize(mean=0.5, std=0.5) -> [-1, 1].
+        face = (face - 0.5) / 0.5
         if face.shape != (IMAGE_SIZE, IMAGE_SIZE):
             import cv2
 
@@ -63,6 +83,9 @@ class EmotionRecognizer:
 class NullEmotionRecognizer:
     def predict(self, face_gray: np.ndarray) -> tuple[str, float]:
         return "unknown", 0.0
+
+    def predict_proba(self, face_gray: np.ndarray) -> np.ndarray:
+        return np.zeros(len(EMOTION_CLASSES), dtype="float32")
 
 
 def create_emotion_recognizer(weights_path: Path, device: str | None = None):
