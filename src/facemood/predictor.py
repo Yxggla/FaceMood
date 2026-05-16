@@ -61,6 +61,8 @@ class FaceMoodPredictor:
         switch_hold_frames: int = EMOTION_SWITCH_HOLD_FRAMES,
         face_lost_tolerance: int = FACE_LOST_TOLERANCE,
         min_emotion_conf: float = MIN_EMOTION_CONF,
+        use_geo_rules: bool = True,
+        use_emotion_bias: bool = True,
         face_detector=None,
         landmark_detector=None,
         emotion_recognizer=None,
@@ -78,8 +80,13 @@ class FaceMoodPredictor:
         self.emotion_recognizer = (
             emotion_recognizer
             if emotion_recognizer is not None
-            else create_emotion_recognizer(Path(model_path), device=device)
+            else create_emotion_recognizer(
+                Path(model_path),
+                device=device,
+                use_emotion_bias=use_emotion_bias,
+            )
         )
+        self.use_geo_rules = bool(use_geo_rules)
         self.stabilizer = TemporalStabilizer(
             enabled=stable,
             bbox_alpha=bbox_alpha,
@@ -128,7 +135,8 @@ class FaceMoodPredictor:
             if face is not None
             else np.zeros(len(EMOTION_CLASSES), dtype="float32")
         )
-        probs = _geo_override(probs, landmarks)
+        if self.use_geo_rules:
+            probs = _geo_override(probs, landmarks)
         prediction = self.stabilizer.on_detection(detection.bbox, landmarks, probs)
         return [prediction]
 
@@ -274,23 +282,23 @@ def _geo_override(probs: np.ndarray, landmarks: FaceLandmarks | None) -> np.ndar
     geo_idx = EMOTION_CLASSES.index(geo_emotion)
     model_geo_conf = float(probs[geo_idx])
 
-    # Geo 强烈判定 angry 时直接接管（用户反馈 angry 最难识别）
-    if geo_emotion == "angry" and geo_conf > 0.45:
+    # Geo 只在模型明显不自信、且几何信号足够强时才接管 angry
+    if geo_emotion == "angry" and geo_conf >= 0.70 and top_conf < 0.35:
         new_probs = np.zeros(len(EMOTION_CLASSES), dtype="float32")
         new_probs[geo_idx] = geo_conf
         return _safe_probs(new_probs)
 
-    # Geo 判定 sad/fear/angry 且模型不自信 (< 0.50) 时覆盖
-    if top_emotion != geo_emotion and top_conf < 0.50:
+    # Geo 判定 sad/fear/angry 且模型明显不自信时覆盖
+    if top_emotion != geo_emotion and top_conf < 0.35 and geo_conf >= 0.60:
         new_probs = np.zeros(len(EMOTION_CLASSES), dtype="float32")
         new_probs[geo_idx] = geo_conf
         return _safe_probs(new_probs)
 
-    # 模型和 geo 判定一致但 geo 置信度更高时提升
-    if top_emotion == geo_emotion and model_geo_conf < geo_conf:
-        new_probs = np.zeros(len(EMOTION_CLASSES), dtype="float32")
-        new_probs[geo_idx] = geo_conf
-        return _safe_probs(new_probs)
+    # 模型和 geo 一致时，只做温和增强，不再直接硬覆盖
+    if top_emotion == geo_emotion and geo_conf > model_geo_conf + 0.10:
+        blended = probs.copy()
+        blended[geo_idx] = 0.75 * model_geo_conf + 0.25 * geo_conf
+        return _safe_probs(blended)
 
     return probs
 

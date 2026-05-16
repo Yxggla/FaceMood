@@ -18,14 +18,14 @@ FACE_DETECTOR = "mediapipe"  # mediapipe | haar | auto
 FACE_MIN_DETECTION_CONFIDENCE = 0.6
 FACE_MIN_SIZE = 60
 NO_LANDMARKS_POLICY = "infer"  # discard | unknown | allow | infer
-NO_LANDMARKS_MIN_EMOTION_CONF = 0.40
-MIN_EMOTION_CONF = 0.15
+NO_LANDMARKS_MIN_EMOTION_CONF = 0.24
+MIN_EMOTION_CONF = 0.08
 
 # 定向增强难识别的情绪（模型输出概率加权，值越大越容易识别）
 EMOTION_BIAS = {
-    "angry": 0.18,
-    "sad": 0.14,
-    "fear": 0.12,
+    "angry": 0.04,
+    "sad": 0.03,
+    "fear": 0.02,
 }
 
 STABILIZE_SINGLE_FACE = True

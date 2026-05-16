@@ -38,6 +38,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-face-size", type=int, default=FACE_MIN_SIZE)
     parser.add_argument("--no-landmarks", choices=["discard", "unknown", "allow", "infer"], default=NO_LANDMARKS_POLICY)
     parser.add_argument("--stable", choices=["on", "off"], default="on" if STABILIZE_SINGLE_FACE else "off")
+    parser.add_argument("--use-geo-rules", choices=["on", "off"], default="on")
+    parser.add_argument("--use-emotion-bias", choices=["on", "off"], default="on")
     parser.add_argument("--bbox-alpha", type=float, default=BBOX_EMA_ALPHA)
     parser.add_argument("--emotion-alpha", type=float, default=EMOTION_EMA_ALPHA)
     parser.add_argument("--switch-margin", type=float, default=EMOTION_SWITCH_MARGIN)
@@ -63,6 +65,8 @@ def main() -> None:
         switch_hold_frames=args.switch_hold_frames,
         face_lost_tolerance=args.face_lost_tolerance,
         min_emotion_conf=args.min_emotion_conf,
+        use_geo_rules=args.use_geo_rules == "on",
+        use_emotion_bias=args.use_emotion_bias == "on",
     )
     screenshots_dir = PROJECT_ROOT / "results" / "screenshots"
     videos_dir = PROJECT_ROOT / "results" / "videos"

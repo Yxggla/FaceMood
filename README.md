@@ -50,14 +50,14 @@ The project reads the existing image dataset at `data/fer2013_7cls_images`.
 The FER2013 data folders are intentionally ignored by Git because they are large local assets.
 
 ```bash
-python train/train_emotion.py --epochs 10
+python train/train_emotion.py --arch cnn_v2 --epochs 40 --class-weights
 python train/evaluate.py --weights models/exported/emotion_cnn.pt
 ```
 
 For a quick smoke test:
 
 ```bash
-python train/train_emotion.py --epochs 1 --limit-train 256 --limit-val 128
+python train/train_emotion.py --arch cnn_v2 --epochs 1 --limit-train 256 --limit-val 128
 ```
 
 ## Dataset Report
@@ -94,10 +94,10 @@ The demo overlays FPS, current emotion distribution, and a recording indicator.
 
 ## Optional Model Tuning
 
-The improved local result uses a stronger CNN, data augmentation, learning-rate decay, and class weighting:
+The training pipeline now supports the original CNN baseline, a stronger `cnn_v2`, and `resnet18`. For the stronger CNN run:
 
 ```bash
-python train/train_emotion.py --epochs 30 --class-weights
+python train/train_emotion.py --arch cnn_v2 --epochs 40 --class-weights
 ```
 
 Current improved local result:
