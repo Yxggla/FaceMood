@@ -5,7 +5,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = PROJECT_ROOT / "data"
 IMAGE_DATA_DIR = DATA_DIR / "fer2013_7cls_images"
-MODEL_PATH = PROJECT_ROOT / "models" / "exported" / "emotion_cnn.pt"
+MODEL_PATH = PROJECT_ROOT / "models" / "exported" / "emotion_resnet18_kaggle.pt"
 
 # 用户可见的情绪类别（已移除 disgust）
 EMOTION_CLASSES = ["angry", "fear", "happy", "neutral", "sad", "surprise"]

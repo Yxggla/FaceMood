@@ -30,8 +30,6 @@ If you only want to open the project launcher first, no extra packages are requi
 python3 run.py
 ```
 
-On macOS, double-click `start_mac.command`. On Windows, double-click `start_windows.bat`.
-
 For detailed teammate setup instructions, read `START_HERE.md`.
 
 The launcher can show dataset counts, preview sample images, check dependencies, and generate a dataset report without running the emotion model.
@@ -51,7 +49,7 @@ The FER2013 data folders are intentionally ignored by Git because they are large
 
 ```bash
 python train/train_emotion.py --arch cnn_v2 --epochs 40 --class-weights
-python train/evaluate.py --weights models/exported/emotion_cnn.pt
+python train/evaluate.py --weights models/exported/emotion_resnet18_kaggle.pt
 ```
 
 For a quick smoke test:
@@ -79,10 +77,23 @@ report/DATASET_SUMMARY.md
 ## Run Demo
 
 ```bash
-python src/main.py
+python3 run_demo_resnet18.py
 ```
 
-If `models/exported/emotion_cnn.pt` does not exist yet, the demo still opens the camera and draws detections/landmarks, but emotion labels are shown as `unknown`.
+Alternative demo entry:
+
+```bash
+python3 run_demo_cnn_v2.py
+```
+
+These two scripts are the supported model-specific runtime entrypoints:
+
+- `run_demo_resnet18.py`: current default demo path, loads `models/exported/emotion_resnet18_kaggle.pt`
+- `run_demo_cnn_v2.py`: comparison demo path, loads `models/exported/emotion_cnn_v2_kaggle.pt`
+
+The original baseline CNN checkpoint is kept in the repository as an archived training result, but it is no longer used as a demo runtime target.
+
+If the selected model file does not exist yet, the demo still opens the camera and draws detections/landmarks, but emotion labels are shown as `unknown`.
 
 Demo controls:
 
@@ -94,15 +105,18 @@ The demo overlays FPS, current emotion distribution, and a recording indicator.
 
 ## Optional Model Tuning
 
-The training pipeline now supports the original CNN baseline, a stronger `cnn_v2`, and `resnet18`. For the stronger CNN run:
+The training pipeline still supports the archived baseline CNN, `cnn_v2`, and `resnet18`.
+
+Recommended training commands:
 
 ```bash
 python train/train_emotion.py --arch cnn_v2 --epochs 40 --class-weights
+python train/train_emotion.py --arch resnet18 --epochs 30 --batch-size 64 --class-weights
 ```
 
-Current improved local result:
+Current tracked results:
 
-- Best validation accuracy: `60.96%`
-- Test accuracy: `63.30%`
-- Strong classes: `happy`, `surprise`
-- Improved minority-class behavior: `disgust` recall increased substantially compared with the first baseline
+- Baseline CNN: `63.30%` test accuracy
+- `cnn_v2`: `66.09%` test accuracy
+- `resnet18`: `69.30%` test accuracy
+- Current recommended demo/runtime model: `resnet18`

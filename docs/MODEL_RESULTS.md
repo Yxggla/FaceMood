@@ -1,41 +1,49 @@
 # FaceMood Model Results
 
-## Current Improved Model
+## Current Model Summary
 
-- Architecture: deeper 4-block CNN with batch normalization, dropout, and adaptive average pooling.
-- Training: 30 epochs on FER2013 7 classes.
-- Optimization: Adam, learning-rate decay, weight decay, class-weighted cross entropy.
-- Data augmentation: random horizontal flip, affine transform, and random erasing.
-- Best validation accuracy: 60.96% at epoch 27.
-- Test accuracy: 63.30%.
+The project now keeps three tracked model lines:
 
-## Per-Class Test Summary
+- Baseline CNN: archived comparison model.
+- `cnn_v2`: stronger custom grayscale CNN used as a comparison runtime.
+- `resnet18`: current recommended demo/runtime model.
 
-| Emotion | Precision | Recall | F1 | Support |
-|---|---:|---:|---:|---:|
-| angry | 0.582 | 0.558 | 0.570 | 491 |
-| disgust | 0.393 | 0.836 | 0.535 | 55 |
-| fear | 0.464 | 0.246 | 0.322 | 528 |
-| happy | 0.872 | 0.844 | 0.858 | 879 |
-| neutral | 0.599 | 0.655 | 0.626 | 626 |
-| sad | 0.475 | 0.534 | 0.502 | 594 |
-| surprise | 0.681 | 0.849 | 0.756 | 416 |
+## Current Best Model
 
-## Comparison With First Baseline
+- Architecture: `resnet18`
+- Training: 30 epochs on FER2013 7 classes
+- Input: 224x224, grayscale expanded to 3 channels with ImageNet normalization
+- Test accuracy: 69.30%
+- Macro F1: 0.6879
 
-- First baseline test accuracy: 60.80%.
-- Improved model test accuracy: 63.30%.
-- Absolute improvement: +2.50 percentage points.
-- The biggest practical improvement is the `disgust` recall, which rose from 0.164 to 0.836 after class weighting and augmentation.
-- `fear` remains the weakest class and should be discussed as a limitation.
+## Secondary Comparison Model
 
-## Files Generated Locally
+- Architecture: `cnn_v2`
+- Training: 40 epochs on FER2013 7 classes
+- Input: 48x48 grayscale
+- Test accuracy: 66.09%
+- Macro F1: 0.6246
 
-These files are intentionally not pushed to GitHub:
+## Archived Baseline
+
+- Architecture: deeper 4-block CNN with batch normalization, dropout, and adaptive average pooling
+- Training: 30 epochs on FER2013 7 classes
+- Best validation accuracy: 60.96% at epoch 27
+- Test accuracy: 63.30%
+
+## Accuracy Comparison
+
+| Model | Test Accuracy | Notes |
+|---|---:|---|
+| Baseline CNN | 63.30% | Archived local baseline |
+| `cnn_v2` | 66.09% | Stronger custom grayscale CNN |
+| `resnet18` | 69.30% | Current recommended runtime model |
+
+## Stored Local Model Files
 
 - `models/exported/emotion_cnn.pt`
-- `results/metrics/training_history.json`
-- `results/metrics/test_classification_report.json`
-- `results/figures/training_history.png`
-- `results/figures/test_confusion_matrix.png`
+- `models/exported/emotion_cnn_v2_kaggle.pt`
+- `models/exported/emotion_resnet18_kaggle.pt`
+- `results/metrics/cnn_v2_kaggle_summary.json`
+- `results/metrics/resnet18_kaggle_summary.json`
 

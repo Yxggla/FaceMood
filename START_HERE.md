@@ -7,32 +7,12 @@
 
 ## 1. 先运行基础启动器
 
-### macOS
+### macOS / Windows
 
-双击：
-
-```text
-start_mac.command
-```
-
-或在终端运行：
+在终端运行：
 
 ```bash
 python3 run.py
-```
-
-### Windows
-
-双击：
-
-```text
-start_windows.bat
-```
-
-或在 PowerShell / CMD 运行：
-
-```bat
-py -3 run.py
 ```
 
 启动器窗口会显示：
@@ -73,10 +53,18 @@ pip install -r requirements.txt
 ## 3. 运行实时窗口
 
 ```bash
-python src/main.py
+python3 run_demo_resnet18.py
 ```
 
-当前可以先不训练模型。没有 `models/exported/emotion_cnn.pt` 时，窗口仍会尝试打开摄像头并画人脸框/关键点，表情会显示为 `unknown`。
+这是当前默认推荐的实时 demo 入口，使用 `resnet18` 权重。
+
+如果要运行 `cnn_v2` 对比版本：
+
+```bash
+python3 run_demo_cnn_v2.py
+```
+
+如果选定的模型文件不存在，窗口仍会尝试打开摄像头并画人脸框/关键点，但表情会显示为 `unknown`。
 
 实时窗口按键：
 
@@ -98,33 +86,35 @@ results/videos/
 确认训练脚本能跑通：
 
 ```bash
-python train/train_emotion.py --epochs 1 --limit-train 256 --limit-val 128
+python train/train_emotion.py --arch cnn_v2 --epochs 1 --limit-train 256 --limit-val 128
 ```
 
-正式训练：
+正式训练 `cnn_v2`：
 
 ```bash
-python train/train_emotion.py --epochs 10
+python train/train_emotion.py --arch cnn_v2 --epochs 40 --class-weights
 ```
 
-如果想针对 `disgust`、`fear` 这类弱类别做优化，可以试：
+正式训练 `resnet18`：
 
 ```bash
-python train/train_emotion.py --epochs 30 --class-weights
+python train/train_emotion.py --arch resnet18 --epochs 30 --batch-size 64 --class-weights
 ```
 
-这不是必需项，最终是否采用要看验证集和测试集结果。
+原始 baseline CNN 的训练代码仍然保留用于归档和对比，但当前不再作为推荐运行模型。
 
-训练完成后，默认模型会保存到：
+训练产物会根据导出路径保存。当前项目里已经保留的主要权重有：
 
 ```text
-models/exported/emotion_cnn.pt
+models/exported/emotion_cnn_v2_kaggle.pt
+models/exported/emotion_resnet18_kaggle.pt
 ```
 
 ## 5. 评估模型
 
 ```bash
-python train/evaluate.py --weights models/exported/emotion_cnn.pt
+python train/evaluate.py --weights models/exported/emotion_cnn_v2_kaggle.pt
+python train/evaluate.py --weights models/exported/emotion_resnet18_kaggle.pt
 ```
 
 输出会保存到：
