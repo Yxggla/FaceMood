@@ -79,6 +79,19 @@ results/screenshots/
 results/videos/
 ```
 
+自动截图默认开启：当同一个表情连续稳定识别 5 帧后，会自动为每个表情保存最多 10 张，路径是：
+
+```text
+results/screenshots/auto/<emotion>/
+```
+
+如果实验时想关掉自动截图，或调整稳定帧数/每类张数：
+
+```bash
+python3 src/main.py --auto-screenshots off
+python3 src/main.py --auto-shots-per-emotion 10 --auto-stable-frames 5
+```
+
 ## 4. 快速训练测试
 
 这一节会开始训练模型。如果当前电脑不负责训练，可以先跳过。

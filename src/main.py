@@ -7,6 +7,7 @@ from pathlib import Path
 
 import cv2
 
+from facemood.auto_capture import AutoEmotionScreenshotter
 from facemood.camera import Camera
 from facemood.config import (
     BBOX_EMA_ALPHA,
@@ -46,6 +47,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--switch-hold-frames", type=int, default=EMOTION_SWITCH_HOLD_FRAMES)
     parser.add_argument("--face-lost-tolerance", type=int, default=FACE_LOST_TOLERANCE)
     parser.add_argument("--min-emotion-conf", type=float, default=MIN_EMOTION_CONF)
+    parser.add_argument("--auto-screenshots", choices=["on", "off"], default="on")
+    parser.add_argument("--auto-shots-per-emotion", type=int, default=10)
+    parser.add_argument("--auto-stable-frames", type=int, default=5)
+    parser.add_argument("--auto-interval-frames", type=int, default=3)
+    parser.add_argument("--auto-min-conf", type=float, default=0.0)
     return parser.parse_args()
 
 
@@ -72,6 +78,24 @@ def main() -> None:
     videos_dir = PROJECT_ROOT / "results" / "videos"
     screenshots_dir.mkdir(parents=True, exist_ok=True)
     videos_dir.mkdir(parents=True, exist_ok=True)
+    auto_screenshotter = (
+        AutoEmotionScreenshotter(
+            screenshots_dir / "auto",
+            shots_per_emotion=args.auto_shots_per_emotion,
+            stable_frames=args.auto_stable_frames,
+            interval_frames=args.auto_interval_frames,
+            min_confidence=args.auto_min_conf,
+        )
+        if args.auto_screenshots == "on"
+        else None
+    )
+    if auto_screenshotter is not None:
+        print(
+            "Auto screenshots enabled: "
+            f"{auto_screenshotter.shots_per_emotion} per emotion after "
+            f"{auto_screenshotter.stable_frames} stable frames. "
+            f"Output: {auto_screenshotter.output_dir}"
+        )
     recorder = DemoRecorder(videos_dir)
     fps_meter = FpsMeter()
 
@@ -81,7 +105,20 @@ def main() -> None:
             frame = cv2.flip(frame, 1)  # 水平镜像翻转，营造自拍镜效果
             predictions = predictor.predict_frame(frame)
             fps = fps_meter.tick()
-            output = draw_predictions(frame, predictions, fps=fps, recording=recorder.is_recording)
+            auto_status = _auto_status(auto_screenshotter)
+            output = draw_predictions(
+                frame,
+                predictions,
+                fps=fps,
+                recording=recorder.is_recording,
+                auto_status=auto_status,
+            )
+            if auto_screenshotter is not None:
+                for result in auto_screenshotter.update(output, predictions):
+                    print(
+                        f"Auto screenshot [{result.emotion} "
+                        f"{result.count}/{auto_screenshotter.shots_per_emotion}]: {result.path}"
+                    )
             recorder.write(output)
             cv2.imshow("FaceMood", output)
             key = cv2.waitKey(1) & 0xFF
@@ -154,6 +191,14 @@ class DemoRecorder:
 
 def _timestamp() -> str:
     return datetime.now().strftime("%Y%m%d_%H%M%S")
+
+
+def _auto_status(auto_screenshotter: AutoEmotionScreenshotter | None) -> str | None:
+    if auto_screenshotter is None:
+        return None
+    if auto_screenshotter.is_complete:
+        return f"AUTO done {auto_screenshotter.total_saved}/{auto_screenshotter.total_target}"
+    return f"AUTO {auto_screenshotter.total_saved}/{auto_screenshotter.total_target}"
 
 
 if __name__ == "__main__":

@@ -103,6 +103,19 @@ Demo controls:
 
 The demo overlays FPS, current emotion distribution, and a recording indicator.
 
+Auto screenshots are enabled by default. After the same emotion stays stable for 5 consecutive frames, the demo saves up to 10 screenshots per emotion under:
+
+```text
+results/screenshots/auto/<emotion>/
+```
+
+Useful options:
+
+```bash
+python3 src/main.py --auto-screenshots off
+python3 src/main.py --auto-shots-per-emotion 10 --auto-stable-frames 5 --auto-interval-frames 3
+```
+
 ## Optional Model Tuning
 
 The training pipeline still supports the archived baseline CNN, `cnn_v2`, and `resnet18`.

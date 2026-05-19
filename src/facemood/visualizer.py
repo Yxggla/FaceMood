@@ -37,6 +37,7 @@ def draw_predictions(
     predictions: list[FacePrediction],
     fps: float | None = None,
     recording: bool = False,
+    auto_status: str | None = None,
 ) -> np.ndarray:
     canvas = frame.copy()
 
@@ -53,16 +54,18 @@ def draw_predictions(
     if not predictions:
         _draw_label_bg(canvas, "No face detected", (MARGIN, MARGIN + 24), COLORS["unknown"])
 
-    _draw_status_bar(canvas, fps=fps, recording=recording)
+    _draw_status_bar(canvas, fps=fps, recording=recording, auto_status=auto_status)
     _draw_prob_panel(canvas, predictions)
 
     return canvas
 
 
-def _draw_status_bar(frame: np.ndarray, fps: float | None, recording: bool) -> None:
+def _draw_status_bar(frame: np.ndarray, fps: float | None, recording: bool, auto_status: str | None) -> None:
     parts = []
     if fps is not None:
         parts.append(f"FPS {fps:.0f}")
+    if auto_status:
+        parts.append(auto_status)
     parts.append("S screenshot")
     parts.append("R record")
     parts.append("Q quit")
